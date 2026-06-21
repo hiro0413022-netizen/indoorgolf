@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { PLAN_CONFIG } from "@/lib/plans";
 import { MemberPlan } from "@prisma/client";
 import Link from "next/link";
+import ReservationCard from "./ReservationCard";
 
 function formatTime(date: Date) {
   return new Date(date).toLocaleTimeString("ja-JP", {
@@ -90,7 +91,10 @@ export default async function ReservationsPage({
               (r) => r.bay.number === bay.number
             );
             return (
-              <div key={bay.id} className="bg-white rounded-xl border shadow-sm overflow-hidden">
+              <div
+                key={bay.id}
+                className="bg-white rounded-xl border shadow-sm overflow-hidden"
+              >
                 <div className="bg-green-700 text-white px-4 py-3">
                   <h3 className="font-semibold">{bay.name}</h3>
                   <p className="text-xs text-green-200">{bayReservations.length}件</p>
@@ -102,24 +106,18 @@ export default async function ReservationsPage({
                     </p>
                   ) : (
                     bayReservations.map((r) => (
-                      <div key={r.id} className="px-4 py-3">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="font-medium text-sm">{r.member.name}</p>
-                            <p className="text-xs text-gray-500">
-                              {formatTime(r.startAt)} – {formatTime(r.endAt)}
-                            </p>
-                            {r.guestCount > 0 && (
-                              <p className="text-xs text-blue-600">
-                                同伴者 {r.guestCount}名
-                              </p>
-                            )}
-                          </div>
-                          <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
-                            {PLAN_CONFIG[r.member.plan as MemberPlan].label}
-                          </span>
-                        </div>
-                      </div>
+                      <ReservationCard
+                        key={r.id}
+                        id={r.id}
+                        memberName={r.member.name}
+                        planLabel={
+                          PLAN_CONFIG[r.member.plan as MemberPlan].label
+                        }
+                        startTime={formatTime(r.startAt)}
+                        endTime={formatTime(r.endAt)}
+                        guestCount={r.guestCount}
+                        status={r.status}
+                      />
                     ))
                   )}
                 </div>
@@ -127,12 +125,6 @@ export default async function ReservationsPage({
             );
           })}
         </div>
-
-        {reservations.length === 0 && (
-          <p className="text-center py-8 text-gray-400">
-            この日の予約はありません
-          </p>
-        )}
       </div>
     </div>
   );

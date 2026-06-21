@@ -96,19 +96,20 @@ model Bay {
 }
 
 model Reservation {
-  id          String            @id @default(cuid())
-  memberId    String
-  bayId       String
-  startAt     DateTime
-  endAt       DateTime
-  status      ReservationStatus @default(CONFIRMED)
-  guestCount  Int               @default(0)
-  notes       String?
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  id             String            @id @default(cuid())
+  memberId       String
+  bayId          String
+  startAt        DateTime
+  endAt          DateTime
+  status         ReservationStatus @default(CONFIRMED)
+  guestCount     Int               @default(0)
+  notes          String?
+  bayFeeCharged  Boolean           @default(false) // 月末まとめ請求済みフラグ
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
 
-  member      Member            @relation(fields: [memberId], references: [id])
-  bay         Bay               @relation(fields: [bayId], references: [id])
+  member         Member            @relation(fields: [memberId], references: [id])
+  bay            Bay               @relation(fields: [bayId], references: [id])
 }
 
 enum ReservationStatus {

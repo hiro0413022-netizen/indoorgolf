@@ -23,7 +23,7 @@ export default function Home() {
         </Link>
 
         <p className="text-xs text-gray-400 mt-8 mb-2">— 管理メニュー —</p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <Link
             href="/admin/trials"
             className="block p-6 bg-white rounded-xl shadow hover:shadow-md border border-gray-200 hover:border-green-400 transition-all"
@@ -49,6 +49,15 @@ export default function Home() {
             <div className="text-3xl mb-2">📅</div>
             <h2 className="text-lg font-semibold mb-1">予約管理</h2>
             <p className="text-sm text-gray-500">打席予約・タイムテーブル</p>
+          </Link>
+
+          <Link
+            href="/admin/billing"
+            className="block p-6 bg-white rounded-xl shadow hover:shadow-md border border-gray-200 hover:border-amber-400 transition-all"
+          >
+            <div className="text-3xl mb-2">💰</div>
+            <h2 className="text-lg font-semibold mb-1">打席料請求</h2>
+            <p className="text-sm text-gray-500">月末まとめ請求（330円/回）</p>
           </Link>
         </div>
       </div>
