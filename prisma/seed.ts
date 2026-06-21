@@ -3,8 +3,12 @@ import { PrismaLibSql } from "@prisma/adapter-libsql";
 import bcrypt from "bcryptjs";
 import path from "path";
 
-const dbPath = path.resolve(process.cwd(), "dev.db");
-const adapter = new PrismaLibSql({ url: `file:${dbPath}` });
+const url = process.env.TURSO_DATABASE_URL;
+const authToken = process.env.TURSO_AUTH_TOKEN;
+const adapter = url?.startsWith("libsql://")
+  ? new PrismaLibSql({ url, authToken })
+  : new PrismaLibSql({ url: `file:${path.resolve(process.cwd(), "dev.db")}` });
+
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
