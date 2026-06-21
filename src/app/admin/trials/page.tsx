@@ -2,6 +2,9 @@ import { prisma } from "@/lib/prisma";
 import { TrialStatus } from "@prisma/client";
 import Link from "next/link";
 
+// ビルド時にDB接続しないよう動的レンダリング
+export const dynamic = "force-dynamic";
+
 const STATUS_LABEL: Record<TrialStatus, string> = {
   APPLIED: "申込受付",
   SCHEDULED: "体験予定",

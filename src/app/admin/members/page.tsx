@@ -3,6 +3,9 @@ import { PLAN_CONFIG } from "@/lib/plans";
 import { MemberPlan, MemberStatus } from "@prisma/client";
 import Link from "next/link";
 
+// ビルド時にDB接続しないよう動的レンダリング
+export const dynamic = "force-dynamic";
+
 const STATUS_LABEL: Record<MemberStatus, string> = {
   ACTIVE: "有効",
   SUSPENDED: "停止",

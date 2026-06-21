@@ -2,6 +2,9 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import BillingBatchPanel from "./BillingBatchPanel";
 
+// ビルド時にDB接続しないよう動的レンダリング
+export const dynamic = "force-dynamic";
+
 export default async function BillingPage() {
   const now = new Date();
 

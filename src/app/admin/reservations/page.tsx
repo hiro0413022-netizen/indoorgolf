@@ -4,6 +4,9 @@ import { MemberPlan } from "@prisma/client";
 import Link from "next/link";
 import ReservationCard from "./ReservationCard";
 
+// 一覧はDBから都度取得するため動的レンダリング（ビルド時にDB接続しない）
+export const dynamic = "force-dynamic";
+
 function formatTime(date: Date) {
   return new Date(date).toLocaleTimeString("ja-JP", {
     hour: "2-digit",
