@@ -37,3 +37,23 @@ export const SESSION_DURATION_MINUTES: Record<MemberPlan, number> = {
   [MemberPlan.LESSON]: 60,
   [MemberPlan.CORPORATE]: 90,
 };
+
+/**
+ * プランごとの Stripe Price ID（月額サブスクリプション）。
+ * Stripe ダッシュボードで作成した price を環境変数で割り当てる。
+ */
+export const STRIPE_PRICE_BY_PLAN: Record<MemberPlan, string | undefined> = {
+  [MemberPlan.REGULAR]: process.env.STRIPE_PRICE_REGULAR,
+  [MemberPlan.MASTER]: process.env.STRIPE_PRICE_MASTER,
+  [MemberPlan.LESSON]: process.env.STRIPE_PRICE_LESSON,
+  [MemberPlan.CORPORATE]: process.env.STRIPE_PRICE_CORPORATE,
+};
+
+/** Stripe Price ID から MemberPlan を逆引きする */
+export function planFromPriceId(priceId: string): MemberPlan | null {
+  const entry = (Object.entries(STRIPE_PRICE_BY_PLAN) as [
+    MemberPlan,
+    string | undefined,
+  ][]).find(([, id]) => id === priceId);
+  return entry ? entry[0] : null;
+}

@@ -16,9 +16,14 @@ model Member {
   status           MemberStatus  @default(ACTIVE)
   joinedAt         DateTime      @default(now())
   expiresAt        DateTime?
-  stripeCustomerId String?       @unique
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
+
+  // Stripe 定期課金（月会費）
+  stripeCustomerId       String?            @unique
+  stripeSubscriptionId   String?            @unique
+  subscriptionStatus     SubscriptionStatus @default(NONE)
+  currentPeriodEnd       DateTime?          // 当月課金の有効期限
 
   trialId          String?       @unique // 体験から入会した場合の紐付け
   trial            Trial?        @relation(fields: [trialId], references: [id])
@@ -120,11 +125,19 @@ model Payment {
   type                  PaymentType
   status                PaymentStatus @default(PENDING)
   stripePaymentIntentId String?       @unique
+  stripeInvoiceId       String?       @unique // 定期課金（請求書）の冪等キー
   paidAt                DateTime?
   description           String?
   createdAt             DateTime      @default(now())
 
   member                Member        @relation(fields: [memberId], references: [id])
+}
+
+enum SubscriptionStatus {
+  NONE       // 未契約
+  ACTIVE     // 課金中
+  PAST_DUE   // 支払い遅延
+  CANCELED   // 解約済み
 }
 
 enum PaymentType {
