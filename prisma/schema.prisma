@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Member {
+  id               String        @id @default(cuid())
+  name             String
+  email            String        @unique
+  phone            String?
+  passwordHash     String
+  plan             MemberPlan    @default(REGULAR)
+  status           MemberStatus  @default(ACTIVE)
+  joinedAt         DateTime      @default(now())
+  expiresAt        DateTime?
+  stripeCustomerId String?       @unique
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  reservations     Reservation[]
+  payments         Payment[]
+}
+
+enum MemberPlan {
+  REGULAR    // 月16,500円 - 1日1回60分
+  MASTER     // 月22,000円 - 制限なし・同伴月2回
+  LESSON     // 月11,000円 - 週1レッスン
+  CORPORATE  // 月33,000円 - 法人
+}
+
+enum MemberStatus {
+  ACTIVE
+  SUSPENDED
+  EXPIRED
+  CANCELLED
+}
+
+model Bay {
+  id           String        @id @default(cuid())
+  number       Int           @unique
+  name         String
+  isActive     Boolean       @default(true)
+
+  reservations Reservation[]
+}
+
+model Reservation {
+  id          String            @id @default(cuid())
+  memberId    String
+  bayId       String
+  startAt     DateTime
+  endAt       DateTime
+  status      ReservationStatus @default(CONFIRMED)
+  guestCount  Int               @default(0)
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  member      Member            @relation(fields: [memberId], references: [id])
+  bay         Bay               @relation(fields: [bayId], references: [id])
+}
+
+enum ReservationStatus {
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+model Payment {
+  id                    String        @id @default(cuid())
+  memberId              String
+  amount                Int
+  type                  PaymentType
+  status                PaymentStatus @default(PENDING)
+  stripePaymentIntentId String?       @unique
+  paidAt                DateTime?
+  description           String?
+  createdAt             DateTime      @default(now())
+
+  member                Member        @relation(fields: [memberId], references: [id])
+}
+
+enum PaymentType {
+  MONTHLY_FEE
+  BAY_FEE
+  GUEST_FEE
+  LESSON_FEE
+  EVENT_FEE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
