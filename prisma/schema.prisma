@@ -20,8 +20,51 @@ model Member {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
+  trialId          String?       @unique // 体験から入会した場合の紐付け
+  trial            Trial?        @relation(fields: [trialId], references: [id])
+
   reservations     Reservation[]
   payments         Payment[]
+}
+
+/// 体験申し込み（見込み客）— 入会ファネルの起点
+model Trial {
+  id            String       @id @default(cuid())
+  name          String
+  email         String
+  phone         String
+  preferredDate DateTime?    // 体験希望日時
+  source        String?      // 流入経路（Web/SNS/紹介など）
+  status        TrialStatus  @default(APPLIED)
+  notes         String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  survey        TrialSurvey?
+  member        Member?
+}
+
+enum TrialStatus {
+  APPLIED    // 申し込み受付
+  SCHEDULED  // 体験日確定
+  COMPLETED  // 体験実施済み
+  CONVERTED  // 入会済み
+  CANCELLED  // キャンセル/見送り
+}
+
+/// 体験後アンケート — 体験(Trial)に1:1で紐付く
+model TrialSurvey {
+  id             String   @id @default(cuid())
+  trialId        String   @unique
+  satisfaction   Int      // 総合満足度 1〜5
+  simulatorScore Int      // シミュレーター体験 1〜5
+  staffScore     Int      // スタッフ対応 1〜5
+  joinIntent     Int      // 入会意向 1〜5
+  interestedPlan MemberPlan? // 関心のあるプラン
+  comment        String?
+  createdAt      DateTime @default(now())
+
+  trial          Trial    @relation(fields: [trialId], references: [id])
 }
 
 enum MemberPlan {
